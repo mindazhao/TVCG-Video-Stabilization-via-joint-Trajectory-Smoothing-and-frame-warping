@@ -1416,32 +1416,32 @@ void union_smooth::warping_video(double fps, bool border)
 
 
 
-			for (int h = 0; h < each_frame_destin[t].GetMeshHeight(); h++)
-				for (int w = 0; w < each_frame_destin[t].GetMeshWidth(); w++)
-				{
-					for (int x = -1; x <= 1; x++)
-					{
+			//for (int h = 0; h < each_frame_destin[t].GetMeshHeight(); h++)
+			//	for (int w = 0; w < each_frame_destin[t].GetMeshWidth(); w++)
+			//	{
+			//		for (int x = -1; x <= 1; x++)
+			//		{
 
-						if ((x + w) < 0 || (x + w) >= each_frame_destin[t].GetMeshWidth())
-						{
-							continue;
-						}
+			//			if ((x + w) < 0 || (x + w) >= each_frame_destin[t].GetMeshWidth())
+			//			{
+			//				continue;
+			//			}
 
-						line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0] + 120, each_frame_destin[t].GetVertex(h, w)[1] + 120),
-							Point(each_frame_destin[t].GetVertex(h, w + x)[0] + 120, each_frame_destin[t].GetVertex(h, w + x)[1] + 120), Scalar(255, 255, 0), 2);
-					}
-					for (int y = -1; y <= 1; y++)
-					{
-						if ((y + h) < 0 || (y + h) >= each_frame_destin[t].GetMeshHeight())
-						{
-							continue;
-						}
-						line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0] + 120, each_frame_destin[t].GetVertex(h, w)[1] + 120),
-							Point(each_frame_destin[t].GetVertex(h + y, w)[0] + 120, each_frame_destin[t].GetVertex(h + y, w)[1] + 120), Scalar(255, 255, 0), 2);
-					}
-				}
+			//			line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0] + 120, each_frame_destin[t].GetVertex(h, w)[1] + 120),
+			//				Point(each_frame_destin[t].GetVertex(h, w + x)[0] + 120, each_frame_destin[t].GetVertex(h, w + x)[1] + 120), Scalar(255, 255, 0), 2);
+			//		}
+			//		for (int y = -1; y <= 1; y++)
+			//		{
+			//			if ((y + h) < 0 || (y + h) >= each_frame_destin[t].GetMeshHeight())
+			//			{
+			//				continue;
+			//			}
+			//			line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0] + 120, each_frame_destin[t].GetVertex(h, w)[1] + 120),
+			//				Point(each_frame_destin[t].GetVertex(h + y, w)[0] + 120, each_frame_destin[t].GetVertex(h + y, w)[1] + 120), Scalar(255, 255, 0), 2);
+			//		}
+			//	}
 
-			vw_mesh << dst;
+			//vw_mesh << dst;
 
 			namedWindow("test");
 			imshow("test", dst);
@@ -1459,11 +1459,11 @@ void union_smooth::warping_video(double fps, bool border)
 			true);
 
 		//save mesh
-		cv::VideoWriter vw_mesh;
+		/*cv::VideoWriter vw_mesh;
 		vw_mesh.open(save_cut_dst_video_path, CV_FOURCC('X', 'V', 'I', 'D'),
 			fps,
 			cv::Size(w, h),
-			true);
+			true);*/
 
 
 
@@ -1476,7 +1476,7 @@ void union_smooth::warping_video(double fps, bool border)
 
 		//test
 
-		for (int t = 0; t < frame_num - 1; t++)
+		for (int t = 0; t < frame_num; t++)
 		{
 
 			cv::Mat map_x(h, w, CV_32FC1, cv::Scalar(-1));
@@ -1554,32 +1554,32 @@ void union_smooth::warping_video(double fps, bool border)
 			vw << dst;
 
 
-			for (int h = 0; h < each_frame_destin[t].GetMeshHeight(); h++)
-				for (int w = 0; w < each_frame_destin[t].GetMeshWidth(); w++)
-				{
-					for (int x = -1; x <= 1; x++)
-					{
+			//for (int h = 0; h < each_frame_destin[t].GetMeshHeight(); h++)
+			//	for (int w = 0; w < each_frame_destin[t].GetMeshWidth(); w++)
+			//	{
+			//		for (int x = -1; x <= 1; x++)
+			//		{
 
-						if ((x + w) < 0 || (x + w) >= each_frame_destin[t].GetMeshWidth())
-						{
-							continue;
-						}
+			//			if ((x + w) < 0 || (x + w) >= each_frame_destin[t].GetMeshWidth())
+			//			{
+			//				continue;
+			//			}
 
-						line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0], each_frame_destin[t].GetVertex(h, w)[1]),
-							Point(each_frame_destin[t].GetVertex(h, w + x)[0], each_frame_destin[t].GetVertex(h, w + x)[1]), Scalar(255, 255, 0), 2);
-					}
-					for (int y = -1; y <= 1; y++)
-					{
-						if ((y + h) < 0 || (y + h) >= each_frame_destin[t].GetMeshHeight())
-						{
-							continue;
-						}
-						line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0], each_frame_destin[t].GetVertex(h, w)[1]),
-							Point(each_frame_destin[t].GetVertex(h + y, w)[0], each_frame_destin[t].GetVertex(h + y, w)[1]), Scalar(255, 255, 0), 2);
-					}
-				}
+			//			line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0], each_frame_destin[t].GetVertex(h, w)[1]),
+			//				Point(each_frame_destin[t].GetVertex(h, w + x)[0], each_frame_destin[t].GetVertex(h, w + x)[1]), Scalar(255, 255, 0), 2);
+			//		}
+			//		for (int y = -1; y <= 1; y++)
+			//		{
+			//			if ((y + h) < 0 || (y + h) >= each_frame_destin[t].GetMeshHeight())
+			//			{
+			//				continue;
+			//			}
+			//			line(dst, Point(each_frame_destin[t].GetVertex(h, w)[0], each_frame_destin[t].GetVertex(h, w)[1]),
+			//				Point(each_frame_destin[t].GetVertex(h + y, w)[0], each_frame_destin[t].GetVertex(h + y, w)[1]), Scalar(255, 255, 0), 2);
+			//		}
+			//	}
 
-			vw_mesh << dst;
+			//vw_mesh << dst;
 
 			namedWindow("test");
 			imshow("test", dst);

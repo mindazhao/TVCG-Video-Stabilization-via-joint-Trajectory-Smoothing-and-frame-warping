@@ -35,10 +35,12 @@ void save_info(double smooth, double warping, string video,string file)
 void run_with_different_parmiter(string video_name, string video_file, string path_file, string save_path,double* parmeter)
 {
 	VideoCapture vc(video_file + video_name + ".mp4");
-	int frame_num = (int)(vc.get(cv::CAP_PROP_FRAME_COUNT));
-	int frame_w = (int)(vc.get(cv::CAP_PROP_FRAME_WIDTH));
-	int frame_h = (int)(vc.get(cv::CAP_PROP_FRAME_HEIGHT));
-	double Fps = (double)(vc.get(cv::CAP_PROP_FPS));
+	int frame_num = (int)(vc.get(CV_CAP_PROP_FRAME_COUNT));
+	int frame_w = (int)(vc.get(CV_CAP_PROP_FRAME_WIDTH));
+	int frame_h = (int)(vc.get(CV_CAP_PROP_FRAME_HEIGHT));
+	double Fps = (double)(vc.get(CV_CAP_PROP_FPS));
+
+
 
 	vector<vector<v2d>> frame_points;
 	set_of_path org_paths;
@@ -53,7 +55,7 @@ void run_with_different_parmiter(string video_name, string video_file, string pa
 
 
 	//read path
-	Mat all_path = read_path_and_save_in_mat(path_file + video_name + "_path.txt", org_paths, frame_num);
+	Mat all_path = read_path_and_save_in_mat(path_file + video_name + ".mp4_path.txt", org_paths, frame_num);
 	ComputePointsOfFrame(frame_num, frame_points, index, org_paths);
 
 	cout << "Start smooth" << endl;
@@ -61,7 +63,7 @@ void run_with_different_parmiter(string video_name, string video_file, string pa
 
 
 	Bundled::union_smooth smooth(video_file + video_name + ".mp4",
-		save_path + video_name +"_"+ to_string((int)parmeter[0]) + "_" + to_string((int)parmeter[1])+"_"+ to_string((int)parmeter[2])+"_"+ to_string((int)parmeter[3]) + "_" + to_string((int)parmeter[4]) + "_.mp4",
+		save_path + video_name +"_"+ to_string((int)parmeter[0]) + "_" + to_string((int)parmeter[1])+"_"+ to_string((int)parmeter[2])+"_"+ to_string((int)parmeter[3]) + "_" + to_string((int)parmeter[4]) + "_.avi",
 		save_path + video_name +"_" + to_string((int)parmeter[0]) + "_" + to_string((int)parmeter[1]) + "_" + to_string((int)parmeter[2]) + "_" + to_string((int)parmeter[3]) + "_" + to_string((int)parmeter[4]) + "_mesh.mp4",
 		org_paths, index, frame_h, frame_w, mesh_w, mesh_h, parmeter[0], parmeter[1], parmeter[2], parmeter[3], parmeter[4]);
 
@@ -76,7 +78,7 @@ void run_with_different_parmiter(string video_name, string video_file, string pa
 	smooth.ComputeMeshPointsAndWeight(frame_points);
 
 	//build optimization equation and solve by eigen
-	smooth.solve_by_Eigen(true);
+	smooth.solve_by_Eigen(false);
 
 	cout << "Smooth over" << endl;
 
@@ -89,7 +91,7 @@ void run_with_different_parmiter(string video_name, string video_file, string pa
 	smooth.change_mesh();
 	smooth.find_homograph_from_warped_to_org();
 
-	smooth.warping_video(Fps,true);
+	smooth.warping_video(Fps,false);
 	t2 = cv::getTickCount();
 	cout << "video:" << video_name << "warping cost time is" << (t2 - t1) / cv::getTickFrequency() << endl;
 
@@ -104,18 +106,22 @@ void run_with_different_parmiter(string video_name, string video_file, string pa
 
 int main()
 {
-	string video_name = "video14";
-	string video_file = "D:/data/test_video/";
-	string path_file = "D:/data/";
-	string save_path = "D:/data/";
-	double alpha_1 = 20;
-	double alpha_2 = 10;
-	double Beta_1 = 10;
-	double Beta_2 = 80;
-	double gamma = 0.01;
-	double parmeter[5] = { alpha_1 ,alpha_2,Beta_1,Beta_2,gamma };
+	for (int i = 0; i < 23; i++)
+	{
+		string video_name = to_string(i);
+		string video_file = "E:/data/TVCG/unstable/Regular/videos/";
+		string path_file = "E:/data/TVCG/unstable/Regular/paths1000/";
+		string save_path = "E:/data/TVCG/results/Regular/";
+		
+		double alpha_1 = 20;
+		double alpha_2 = 10;
+		double Beta_1 = 10;
+		double Beta_2 = 80;
+		double gamma = 0.01;
+		double parmeter[5] = { alpha_1, alpha_2, Beta_1, Beta_2, gamma };
 
-	run_with_different_parmiter(video_name, video_file, path_file, save_path, parmeter);
+		run_with_different_parmiter(video_name, video_file, path_file, save_path, parmeter);
+	}
 	
 }
 

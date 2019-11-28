@@ -1,4 +1,4 @@
-function [ tracks ] = GetTracksFromVideo( trackFile, input, meshSize, demand )
+function [ tracks ] = GetTracksFromVideo( trackFile, input, meshSize, demand,name,saveFile,save_images )
 %GETTRACKSFROMVIDEO Summary of this function goes here
 %   Detailed explanation goes here
 %GetTracks Compute tracks by KLT
@@ -13,6 +13,7 @@ function [ tracks ] = GetTracksFromVideo( trackFile, input, meshSize, demand )
     xyloObj = VideoReader(videoPath);
     nFrames = xyloObj.NumberOfFrames;
     
+    
     tracks = TrackLib(nFrames);
     
     tracks.videoHeight = xyloObj.Height;
@@ -21,10 +22,16 @@ function [ tracks ] = GetTracksFromVideo( trackFile, input, meshSize, demand )
     tracker = vision.PointTracker('MaxBidirectionalError', 1);
     
     frame = read(xyloObj, 1); 
+    imshow(frame);
     livePoints = getMorePoints(frame, meshSize, 0, [], demand);
     livePoints = filtermask(frame, livePoints);  %
-    
+   % caseFile='E:/data/unstable/Running/';
     initialize(tracker, livePoints, frame);
+    
+    if(save_images==1)
+        mkdir(strcat(saveFile,'paths/',name));
+        imwrite(frame,strcat(saveFile,'paths/',name,'/',num2str(1),'.jpg'),'Quality',100);
+    end
     tracks.addPoints(livePoints, 1);
     for frameIndex = 2:nFrames
         fprintf('%5d', frameIndex);
@@ -32,7 +39,9 @@ function [ tracks ] = GetTracksFromVideo( trackFile, input, meshSize, demand )
             fprintf('\n') ;
         end        
         frame = read(xyloObj, frameIndex); 
-        
+        if(save_images==1)
+            imwrite(frame,strcat(saveFile,'paths/',name,'/',num2str(frameIndex),'.jpg'),'Quality',100);
+        end
         [livePoints, validity] = step(tracker, frame);
         tracks.endPoints(validity, frameIndex);
         tracks.updatePoints(livePoints(validity == true, :), frameIndex);
@@ -49,7 +58,7 @@ function [ tracks ] = GetTracksFromVideo( trackFile, input, meshSize, demand )
     end
     tracks.endPoints(false(length(tracks.live), 1), nFrames + 1);
     
-    save(trackFile, 'tracks');
+    %save(trackFile, 'tracks');
 end
 
 function pointsMore = getMorePoints(frame, meshSize, nP, oldpoints, demand)
