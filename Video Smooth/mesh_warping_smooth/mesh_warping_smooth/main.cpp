@@ -3,6 +3,11 @@
 #include"union_smooth.h"
 //#include"Motion_conformance.h"
 #include"Median_Filter.h"
+#include <direct.h>
+#include <iomanip>
+#include <process.h>  
+#include <windows.h>  
+#include<io.h>
 using namespace std;
 using namespace cv;
 using namespace Bundled;
@@ -102,27 +107,60 @@ void run_with_different_parmiter(string video_name, string video_file, string pa
 }
 
 
-
+void getAllFiles(string path, vector<string>& files, string format)
+{
+	long long hFile = 0;//文件句柄  64位下long 改为 intptr_t
+	struct _finddata_t fileinfo;//文件信息 
+	string p;
+	if ((hFile = _findfirst(p.assign(path).append("\\*" + format).c_str(), &fileinfo)) != -1) //文件存在
+	{
+		do
+		{
+			if ((fileinfo.attrib & _A_SUBDIR))//判断是否为文件夹
+			{
+				if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0)//文件夹名中不含"."和".."
+				{
+					files.push_back(p.assign(path).append("\\").append(fileinfo.name)); //保存文件夹名
+					//getAllFiles(p.assign(path).append("\\").append(fileinfo.name), files, format); //递归遍历文件夹
+				}
+			}
+			else
+			{
+				files.push_back(p.assign(path).append("\\").append(fileinfo.name));//如果不是文件夹，储存文件名
+			}
+		} while (_findnext(hFile, &fileinfo) == 0);
+		_findclose(hFile);
+	}
+}
 
 int main()
 {
-	for (int i = 0; i < 23; i++)
+	vector<string>class_name{"Regular","Parallax","Crowd"};
+	for (int i = 1; i < class_name.size(); i++)
 	{
-		string video_name = to_string(i);
-		string video_file = "E:/data/TVCG/unstable/Regular/videos/";
-		string path_file = "E:/data/TVCG/unstable/Regular/paths1000/";
-		string save_path = "E:/data/TVCG/results/Regular/";
-		
-		double alpha_1 = 20;
-		double alpha_2 = 10;
-		double Beta_1 = 10;
-		double Beta_2 = 80;
-		double gamma = 0.01;
-		double parmeter[5] = { alpha_1, alpha_2, Beta_1, Beta_2, gamma };
+		string video_file = "E:\\data\\TVCG\\unstable\\" + class_name[i]+ "\\videos\\";
+		string path_file = "E:\\data\\TVCG\\unstable\\" + class_name[i] + "\\paths1000\\";
+		string save_path = "E:\\data\\TVCG\\results\\" + class_name[i] + "\\";
+		string format = ".txt";
+		vector<string>files_unstable;
+		getAllFiles(path_file, files_unstable, format);
 
-		run_with_different_parmiter(video_name, video_file, path_file, save_path, parmeter);
+		for (int j = 0; j < files_unstable.size();j++)
+		{ 
+			
+			int start_num = files_unstable[j].find_last_of("\\");
+			string video_name = files_unstable[j].substr(start_num+1,files_unstable[j].length()-1-start_num-4-5-4);
+
+			double alpha_1 = 20;
+			double alpha_2 = 10;
+			double Beta_1 = 10;
+			double Beta_2 = 80;
+			double gamma = 0.01;
+			double parmeter[5] = { alpha_1, alpha_2, Beta_1, Beta_2, gamma };
+
+			run_with_different_parmiter(video_name, video_file, path_file, save_path, parmeter);
+		}
 	}
-	
 }
 
 
